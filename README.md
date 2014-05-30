@@ -5,8 +5,8 @@
 5. Type "./main", this is launch the main program
 6. Type "./mij", in another console. It will pass to main program input JSON, which you will find in json_input.txt.
 
-P.S. tables you can fill 
-     column 'news text' => sentence_not_changed.txt
-     column 'data_type' => sentence_changed.txt 
+P.S. tables you can fill - 
+     column 'news text' => sentence_not_changed.txt; 
+     column 'data_type' => sentence_changed.txt;  
 that lies in folder 'to_fill_DB'
 
