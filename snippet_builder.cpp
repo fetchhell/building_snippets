@@ -45,7 +45,7 @@ void Snippet_builder::parse_on_sentences(string sentence){
 	int sentence_length = sentence.length();
 	for(int i = 1; i < sentence_length; i++)
 	{
-		if(ssentence.empty() && sentence[i - 1] == ' ');
+		if(ssentence.empty() && (sentence[i - 1] == ' ' || check_point(sentence[i - 1])));
 		else
 		{
 		   ssentence += sentence[i - 1];
@@ -86,6 +86,11 @@ void Snippet_builder::parse_on_sentences(string sentence){
 				{
 					sentences_full_not_changed[number_of_sentences - 1].push_back(ssentence);
 					number_of_words_in_sentences.push_back(number_of_words);
+				}
+				else
+				{
+					sentences_full_not_changed[number_of_sentences - 1].push_back("");
+					number_of_words_in_sentences.push_back(0);
 				}
 
 				number_of_sentences++;
@@ -160,11 +165,12 @@ void Snippet_builder::parse_changed_sentences(string sentence){
 
 		if(sentences_changed[number_of_sentences - 1].size() == number_of_words_in_sentences[number_of_sentences - 1])
 		{
-			if(!word.empty()){
-				sentences_changed[number_of_sentences - 1].insert(word);
-				sentences_changed_vector[number_of_sentences - 1].push_back(word);
-			    word = "";
-			}
+			if(number_of_words_in_sentences[number_of_sentences - 1])
+				if(!word.empty()){
+					sentences_changed[number_of_sentences - 1].insert(word);
+					sentences_changed_vector[number_of_sentences - 1].push_back(word);
+					word = "";
+				}
 
 			number_of_sentences++;
 			sentences_changed.resize(number_of_sentences);
