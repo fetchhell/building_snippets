@@ -441,6 +441,7 @@ void Snippet_builder::make_snippets(string& output){
 		output += snippet;
 
 		int common_number_of_words = 0;
+		number_of_sentences = number_of_words_in_sentences.size();
 		for(int j = 0; j < number_of_sentences; j++)
 			common_number_of_words += number_of_words_in_sentences[j];
 
