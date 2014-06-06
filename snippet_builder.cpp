@@ -3,7 +3,35 @@
 /* Parameters to change */
 #define max_number_of_sentences 10
 #define max_number_of_words     35
-#define radius			3
+#define radius					3
+
+//---------------------------------------------------------
+bool check(char ch)
+{
+	if(    ch == ' ' || ch == ',' || ch == '\t'|| 
+		   ch == '\n'|| ch == ';' || ch == '(' || 
+		   ch == ')' || ch == '\"'|| ch == '-' ||
+		   ch == '\r' ||ch == '\'' || ch == '*' ||
+		   ch == '{' || ch == '}' || ch == '[' ||
+		   ch == ']' || ch == '\\' || ch== '/'|| 
+		   ch == '<' || ch == '>' || ch == '|' ||
+		   ch == '+' || ch == '=' || ch == '^' ||
+		   ch == '&' || ch == ':' || ch == '¹' ||
+		   ch == '#' || ch == '`' || ch == '%' ||
+		   ch == '$'
+    )
+	 return 1;
+	return 0;
+}
+
+//---------------------------------------------------------
+bool check_point(char ch)
+{
+	if(ch == '.' || ch == '!' ||
+			    ch == '?')
+				return 1;
+	return 0;
+}
 
 //---------------------------------------------------------
 void Snippet_builder::parse_on_sentences(string sentence){
@@ -24,17 +52,8 @@ void Snippet_builder::parse_on_sentences(string sentence){
 		   word_position_in_sentence++;
 		}
 
-		if(sentence[i - 1] == ' ' || sentence[i - 1] == ',' || sentence[i - 1] == '\t'|| 
-		   sentence[i - 1] == '\n'|| sentence[i - 1] == ';' || sentence[i - 1] == '(' || 
-		   sentence[i - 1] == ')' || sentence[i - 1] == '\"'|| sentence[i - 1] == '-' ||
-		   sentence[i - 1] == '\r' || sentence[i - 1] == '\'' || sentence[i - 1] == '*' ||
-		   sentence[i - 1] == '{' || sentence[i - 1] == '}' || sentence[i - 1] == '[' ||
-		   sentence[i - 1] == ']' || sentence[i - 1] == '\\' || sentence[i - 1] == '/'|| 
-		   sentence[i - 1] == '<' || sentence[i - 1] == '>' || sentence[i - 1] == '|' ||
-		   sentence[i - 1] == '+' || sentence[i - 1] == '=' || sentence[i - 1] == '^' ||
-		   sentence[i - 1] == '&' || sentence[i - 1] == ':' || sentence[i - 1] == '¹' ||
-		   sentence[i - 1] == '#' || sentence[i - 1] == '`' || sentence[i - 1] == '%' ||
-		   sentence[i - 1] == '$'
+		if(
+			check(sentence[i - 1])
 		   )
 		{
 			if(!word.empty())
@@ -49,8 +68,7 @@ void Snippet_builder::parse_on_sentences(string sentence){
 			continue;
 		}
 
-		while  (sentence[i - 1] == '.' || sentence[i - 1] == '!' ||
-			    sentence[i - 1] == '?')
+		while  (check_point(sentence[i - 1]))
 		{
 			if(!word.empty())
 			{
@@ -87,17 +105,41 @@ void Snippet_builder::parse_on_sentences(string sentence){
 		word += sentence[i - 1];
 	}
 
-	if(!ssentence.empty())	
+	if(!ssentence.empty())
+	{
+		ssentence += sentence[sentence_length - 1];
 		sentences_full_not_changed[number_of_sentences - 1].push_back(ssentence);
+	}
 	
 	if(!word.empty())
 	{
+		if(
+			!check(sentence[sentence_length - 1]) && !check_point(sentence[sentence_length - 1])
+		   )
+		{
+			word += sentence[sentence_length - 1];
+			word_position_in_sentence++;
+		}
+
 		sentences_not_changed[number_of_sentences - 1].push_back(word);
-		positions_in_not_changed_sentences[number_of_sentences - 1].push_back(position_length(word_position_in_sentence - word.length(), word.length()));
+		positions_in_not_changed_sentences[number_of_sentences - 1].push_back(position_length((word_position_in_sentence + 1) - word.length(), word.length()));
 
 		number_of_words++;
 		number_of_words_in_sentences.push_back(number_of_words);
+
+		number_of_words = 0;
 	}
+
+	/* Check, if empty, set zero */
+	if(number_of_words > 0)
+		number_of_words_in_sentences.push_back(number_of_words);
+
+	if(number_of_words_in_sentences.empty())
+		number_of_words_in_sentences.push_back(0);
+
+	if(sentences_full_not_changed.size() == 1)	
+		if(sentences_full_not_changed[0].empty())
+			sentences_full_not_changed[0].push_back("");
 }
 
 //---------------------------------------------------------
@@ -109,9 +151,13 @@ void Snippet_builder::parse_changed_sentences(string sentence){
 
 	string word = "";
 
+	int nsentences = number_of_words_in_sentences.size();
 	int sentence_length = sentence.length();
 	for(int i = 0; i < sentence_length; i++)
 	{
+		if(number_of_sentences > nsentences)
+			break;
+
 		if(sentences_changed[number_of_sentences - 1].size() == number_of_words_in_sentences[number_of_sentences - 1])
 		{
 			if(!word.empty()){
@@ -149,10 +195,10 @@ void Snippet_builder::parse_changed_sentences(string sentence){
 //---------------------------------------------------------
 void Snippet_builder::find_sentences(vector<string>& query_words)
 {
-    if(sentences_changed.empty() || query_words.empty()) return;
+	if(sentences_changed.empty() || query_words.empty()) return;
 
-    /* Copy input query words */
-    qquery_words = query_words;
+	/* Copy input query words */
+	qquery_words = query_words;
 
     /* Search nessesary sentences */
 
@@ -174,9 +220,9 @@ void Snippet_builder::find_sentences(vector<string>& query_words)
 //---------------------------------------------------------
 void Snippet_builder::count_tf_idf(){
 
-         map<string, vector<int> > nmeets_search_words;
+	 map<string, vector<int> > nmeets_search_words;
 
-         map<int, vector<int> >::iterator it;
+     map<int, vector<int> >::iterator it;
 	 for(it = sentence_query.begin(); it != sentence_query.end(); it++)
 	 {
 		 int number_of_search_words = it->second.size();
@@ -336,6 +382,9 @@ string Snippet_builder::parse_snippets_with_tags(int document_number, int first_
 	
 	output += " ... ";
 
+	// if(number_of_words >= max_number_of_words)
+	//	output += "<cutting>";
+
 	delete start_stop;
 	return output;
 }
@@ -393,7 +442,7 @@ void Snippet_builder::make_snippets(string& output){
 
 		int common_number_of_words = 0;
 		for(int j = 0; j < number_of_sentences; j++)
-			common_number_of_words += number_of_words_in_sentences[i];
+			common_number_of_words += number_of_words_in_sentences[j];
 
 		if(i < number_of_sentences && number_of_words < common_number_of_words)
 			output += " ... ";
@@ -413,7 +462,7 @@ void Snippet_builder::make_snippets(string& output){
 
 	/* Find positions of the search words */
 	find_search_words_positions(tf_idf_);
-        int sz = tf_idf_.size();
+    int sz = tf_idf_.size();
 
 	/* Adding tags <b> </b> */
 	int number_of_words = 0;
