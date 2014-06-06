@@ -29,8 +29,6 @@ int main()
         /* Output snippet */
 	string output_snippet = "[ ";
 
-	JSON_Parser     jp;
-
         char buf[BUFSIZE];
         int fd;
 	do {
@@ -58,6 +56,7 @@ int main()
           remove(INPUT_NAME);
 
           /* Parse JSON */
+          JSON_Parser     jp;
 	  jp.parseJSON(buf);
 
 	  map<int, vector<int> >::iterator itMap, next_itMap;
@@ -97,7 +96,7 @@ int main()
 			sprintf(DocId, "[ %d , ", itMap->first);
 
 		        output_snippet += DocId;
-			sb.print_snippets(output_snippet);
+			sb.make_snippets(output_snippet);
 
                         next_itMap++;
 			if(next_itMap != jp.getDocId_Positions().end())
@@ -115,7 +114,7 @@ int main()
                  perror("open");
                  return 1;
           } 
-   
+
           write(fd, output_snippet.c_str(), output_snippet.size());    
           close(fd);
           perror("write");
