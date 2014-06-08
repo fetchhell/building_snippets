@@ -54,7 +54,7 @@ int main()
           perror("read");
           close(fd);
           remove(INPUT_NAME);
-
+ 
           /* Parse JSON */
           JSON_Parser     jp;
 	  jp.parseJSON(buf);
@@ -93,7 +93,7 @@ int main()
 
 			/* 5. Print found snippets */
 			char DocId[256];
-			sprintf(DocId, "[ %d , ", itMap->first);
+			sprintf(DocId, "[ %d , ''' ", itMap->first);
 
 		        output_snippet += DocId;
 			sb.make_snippets(output_snippet);

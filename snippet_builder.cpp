@@ -1,9 +1,9 @@
 #include "snippet_builder.h"
 
 /* Parameters to change */
-#define max_number_of_sentences 10
+#define max_number_of_sentences 7
 #define max_number_of_words     35
-#define radius					3
+#define radius			3
 
 //---------------------------------------------------------
 bool check(char ch)
@@ -454,6 +454,7 @@ void Snippet_builder::make_snippets(string& output){
 		if(i < number_of_sentences && number_of_words < common_number_of_words)
 			output += " ... ";
 
+                output += " ''']";
 		return;
 	}
 
@@ -505,5 +506,5 @@ void Snippet_builder::make_snippets(string& output){
 		if(number_of_words >= max_number_of_words) break;
 	}
 
-	output += " ]";
+	output += " ''']";
 }
