@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LD_LIBRARY_PATH = /opt/PostgreSQL/9.3/lib
+export LD_LIBRARY_PATH=/opt/PostgreSQL/9.3/lib
 
 CXX = g++
 VARNAME = value

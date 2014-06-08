@@ -78,8 +78,8 @@ bool JSON_Parser::check_isdigit(string word)
 
 	int ccount_digit = 0;
 	for(int i = 0; i < size_of_word; i++)	
-		if(('0' <= word[i] && word[i] <= '9') 
-			|| (word[i] == '-' && !i)) ccount_digit++;
+		if(('0' <= word[i] && word[i] <= '9' && i) 
+			|| word[0] == '-') ccount_digit++;
 	
 	if(ccount_digit != size_of_word)
 		return 0;
